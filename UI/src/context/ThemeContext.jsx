@@ -64,7 +64,7 @@ export const ThemeSelector = () => {
 
   return (
     <select
-      className="select select-bordered w-1/5"
+      className="select select-bordered min-w-1/3"
       value={theme}
       onChange={(e) => setTheme(e.target.value)}
     >

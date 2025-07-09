@@ -43,6 +43,7 @@ const HomePage = () => {
 
   const getFolders = useCallback(async () => {
     if (!folderId) return;
+    console.log({ breadcrumbs });
 
     setLoading(true);
     setError("");
@@ -80,7 +81,7 @@ const HomePage = () => {
 
   // When the component mounts, you can set initial breadcrumbs if needed
   useEffect(() => {
-    setBreadcrumbs([{ folderName: "Home", folderId: "/" }]);
+    setBreadcrumbs([{ folderName: "Home", folderId: "" }]);
   }, []);
 
   // Create a new folder in the current folder
@@ -106,7 +107,10 @@ const HomePage = () => {
   if (!user) {
     return (
       <>
-        <div className="min-h-screen p-6 bg-base-200 flex justify-center items-center">
+        <div
+          style={{ height: "calc(100vh - 4rem)" }}
+          className="p-6 bg-base-200 flex justify-center items-center"
+        >
           <h1 className="text-3xl text-center items-center justify-center font-bold">
             Login to access your drive
           </h1>
@@ -116,7 +120,10 @@ const HomePage = () => {
   }
 
   return (
-    <div className="min-h-screen p-6 bg-base-200">
+    <div
+      style={{ minHeight: "calc(100vh - 4rem)" }}
+      className="p-6 bg-base-200"
+    >
       <div className="container mx-auto">
         {/* Header: Upload and Create Folder controls */}
         <div className="flex justify-between items-center mb-6">

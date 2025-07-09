@@ -49,7 +49,9 @@ function Breadcrumb({ breadcrumbs = [], setBreadcrumbs }) {
             <FaFolder className="text-base" />
             <span
               className={
-                crumb.isEllipsis ? "pointer-events-none text-gray-400" : ""
+                crumb.isEllipsis
+                  ? "pointer-events-none text-gray-400"
+                  : "truncate"
               }
             >
               {crumb.folderName}

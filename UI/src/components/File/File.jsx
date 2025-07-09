@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { FaRegFile } from "react-icons/fa6";
 import { useUser } from "../../context/UserContext.jsx";
 
 import api from "../../api/AxiosApi.jsx";
 import ConfirmModal from "../ConfirmModal.jsx";
+
+// icons
+import { FaRegFile } from "react-icons/fa6";
+import { FaEllipsisV } from "react-icons/fa";
 
 const File = ({ item, onRename, onDelete }) => {
   const { user } = useUser();
@@ -117,8 +120,8 @@ const File = ({ item, onRename, onDelete }) => {
           </p>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-2">
+        {/* Desktop actions */}
+        <div className="hidden sm:flex gap-2">
           <button className="btn btn-sm btn-neutral" onClick={handleView}>
             View
           </button>
@@ -137,6 +140,34 @@ const File = ({ item, onRename, onDelete }) => {
           >
             Delete
           </button>
+        </div>
+
+        {/* Mobile 3-dot dropdown */}
+        <div className="dropdown dropdown-end sm:hidden ml-auto">
+          <div
+            tabIndex={0}
+            role="button"
+            className="btn btn-sm btn-ghost text-xl"
+          >
+            <FaEllipsisV />
+          </div>
+          <ul
+            tabIndex={0}
+            className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40"
+          >
+            <li>
+              <button onClick={handleView}>View</button>
+            </li>
+            <li>
+              <button onClick={handleDownload}>Download</button>
+            </li>
+            <li>
+              <button onClick={() => setShowRenameModal(true)}>Rename</button>
+            </li>
+            <li>
+              <button onClick={() => setShowDeleteModal(true)}>Delete</button>
+            </li>
+          </ul>
         </div>
       </div>
 

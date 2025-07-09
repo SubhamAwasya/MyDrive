@@ -1,13 +1,10 @@
 import { useState } from "react";
+import { FaFolder, FaRegFile } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
 import api from "../../api/AxiosApi.jsx";
 import { useUser } from "../../context/UserContext.jsx";
 import ConfirmModal from "../ConfirmModal.jsx";
-
-// icons
-import { FaFolder } from "react-icons/fa6";
-import { FaEllipsisV } from "react-icons/fa";
 
 const Folder = ({
   item,
@@ -26,10 +23,6 @@ const Folder = ({
   const openFolder = () => {
     setCurrentFolder(item._id);
     navigate(`/folder/${item._id}`);
-    setBreadcrumbs((prev) => [
-      ...prev,
-      { folderId: item._id, folderName: item.name },
-    ]);
   };
 
   const renameFolder = async (id, newName) => {
@@ -104,12 +97,21 @@ const Folder = ({
 
         {/* Mobile menu (3-dot) */}
         <div className="dropdown dropdown-end sm:hidden ml-auto">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn btn-sm btn-ghost text-xl"
-          >
-            <FaEllipsisV />
+          <div tabIndex={0} role="button" className="btn btn-sm btn-ghost">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 12h.01M12 12h.01M18 12h.01"
+              />
+            </svg>
           </div>
           <ul
             tabIndex={0}

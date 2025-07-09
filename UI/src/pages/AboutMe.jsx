@@ -30,8 +30,8 @@ const AboutMe = () => {
             clean, responsive apps using modern web technologies.
           </p>
 
-          <div>
-            <h3 className="font-semibold mt-4">Tech Stack:</h3>
+          <div className="flex flex-wrap gap-1 m-2">
+            <h3 className="font-semibold">Tech Stack:</h3>
             <div className="badge badge-neutral mx-1">React</div>
             <div className="badge badge-neutral mx-1">Tailwind</div>
             <div className="badge badge-neutral mx-1">DaisyUI</div>
