@@ -7,7 +7,7 @@ const AboutMe = () => {
         {/* Left Side - Profile */}
         <figure className="p-6">
           <img
-            src="http://localhost:3000/Purple_Profile_img.png" // Replace with your image
+            src="http://localhost:3000/Profile.png" // Replace with your image
             alt="Shubham Awasya"
             className="rounded-xl w-60 h-60 object-cover"
           />

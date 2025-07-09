@@ -62,7 +62,7 @@ async function deleteFolderRecursively(folderId) {
   const files = await File.find({ parentFolder: folderId });
 
   for (const file of files) {
-    const filePath = path.resolve("uploads", file.url.split("/").pop());
+    const filePath = path.resolve("public/uploads", file.url.split("/").pop());
 
     // Remove from disk
     if (fs.existsSync(filePath)) {

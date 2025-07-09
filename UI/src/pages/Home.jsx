@@ -13,6 +13,7 @@ import { FcEmptyTrash } from "react-icons/fc";
 // axios
 import api from "../api/AxiosApi";
 import ConfirmModal from "../components/ConfirmModal.jsx";
+import Breadcrumb from "../components/mini_components/Breadcrumb.jsx";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -38,7 +39,8 @@ const HomePage = () => {
 
   const [breadcrumbs, setBreadcrumbs] = useState([]);
 
-  // Fetch data for current folder based on URL param or user's root folder
+  // Fetch data for current folder based on URL param or user's root folder.
+
   const getFolders = useCallback(async () => {
     if (!folderId) return;
 
@@ -75,6 +77,11 @@ const HomePage = () => {
       getFiles();
     }
   }, [getFolders, getFiles, user]);
+
+  // When the component mounts, you can set initial breadcrumbs if needed
+  useEffect(() => {
+    setBreadcrumbs([{ folderName: "Home", folderId: "/" }]);
+  }, []);
 
   // Create a new folder in the current folder
   const createFolder = async (name) => {
@@ -122,27 +129,22 @@ const HomePage = () => {
               Create Folder
             </button>
           </div>
+
+          {loading && (
+            <div className="w-full text-right">
+              <span className="loading loading-spinner text-primary "></span>
+            </div>
+          )}
         </div>
 
         <hr className="mb-4 opacity-30" />
 
         {/* Breadcrumbs */}
-        <div className="flex breadcrumbs h-10 text-sm mb-4">
-          <ul>
-            <li>
-              <Link to="/">Root</Link>
-            </li>
-            {breadcrumbs.map((crumb) => (
-              <li key={crumb._id}>
-                <Link to={`/folder/${crumb._id}`}>{crumb.name}</Link>
-              </li>
-            ))}
-          </ul>
-          {loading && (
-            <span className="w-full text-right">
-              <span className="loading loading-spinner text-primary "></span>
-            </span>
-          )}
+        <div className="flex mb-4">
+          <Breadcrumb
+            breadcrumbs={breadcrumbs}
+            setBreadcrumbs={setBreadcrumbs}
+          />
         </div>
 
         {/* Drive Items: List of folders and files */}
@@ -155,6 +157,7 @@ const HomePage = () => {
           )}
           {folders.map((item) => (
             <Folder
+              setBreadcrumbs={setBreadcrumbs}
               key={item._id}
               item={item}
               type={"folder"}

@@ -24,11 +24,6 @@ const Navbar = () => {
         {/* Right: Theme Switch */}
 
         <ul className="flex justify-center items-center gap-4 px-1 ml-2">
-          <li>
-            <Link to="/" className={location.pathname === "/" ? "active" : ""}>
-              Home
-            </Link>
-          </li>
           {!user && (
             <>
               <li>

@@ -6,7 +6,13 @@ import api from "../../api/AxiosApi.jsx";
 import { useUser } from "../../context/UserContext.jsx";
 import ConfirmModal from "../ConfirmModal.jsx";
 
-const Folder = ({ item, setCurrentFolder, onRename, onDelete }) => {
+const Folder = ({
+  item,
+  setCurrentFolder,
+  onRename,
+  onDelete,
+  setBreadcrumbs,
+}) => {
   const { user } = useUser();
   const navigate = useNavigate();
 
@@ -17,6 +23,11 @@ const Folder = ({ item, setCurrentFolder, onRename, onDelete }) => {
   const openFolder = () => {
     setCurrentFolder(item._id);
     navigate(`/folder/${item._id}`);
+
+    setBreadcrumbs((prevBreadcrumbs) => [
+      ...prevBreadcrumbs,
+      { folderId: item._id, folderName: item.name },
+    ]);
   };
 
   const renameFolder = async (id, newName) => {
