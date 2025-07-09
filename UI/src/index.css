@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: light --default, dark, bumblebee, cupcake, synthwave, forest, aqua,
+    cyberpunk, retro, corporate, halloween, garden, lofi, pastel, fantasy,
+    wireframe, black, luxury, dracula, cmyk, autumn, business, acid, lemonade,
+    night, coffee, winter;
+}
+
+.my-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 2rem;
+}
