@@ -21,7 +21,11 @@ export async function createFolder(req, res) {
     const folder = await Folder.create({
       name: req.body.name,
       parentFolder,
+      user: req.user.userId,
     });
+
+    console.log(req.user);
+
     res.status(201).json(folder);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -135,5 +139,26 @@ export async function renameFolder(req, res) {
     res.status(200).json(updated);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+}
+
+// Controller to search for folders by name for the authenticated user
+export async function searchFolders(req, res) {
+  const { query } = req.params;
+
+  if (!query || query.trim() === "") {
+    return res.status(400).json({ error: "Search query is required." });
+  }
+
+  try {
+    const folders = await Folder.find({
+      user: req.user.userId,
+      name: { $regex: query, $options: "i" },
+    }).sort({ createdAt: -1 });
+
+    res.status(200).json(folders);
+  } catch (error) {
+    console.error("Error searching folders:", error.message);
+    res.status(500).json({ error: "Failed to search folders" });
   }
 }

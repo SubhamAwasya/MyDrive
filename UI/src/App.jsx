@@ -17,6 +17,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/folder" element={<Home />} />
           <Route path="/folder/:folderId" element={<Home />} />
+          <Route path="/search/:searchQuery" element={<Home />} />
           <Route path="/404" element={<FolderNotFound404 />} />
         </Route>
 

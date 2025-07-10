@@ -1,49 +1,41 @@
 import { useCallback, useEffect, useState } from "react";
 import { useUser } from "../context/UserContext.jsx";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-// my components
+// Components
 import Folder from "../components/Folder/Folder.jsx";
 import UploadFile from "../components/File/UploadFile.jsx";
 import File from "../components/File/File.jsx";
-
-// icons
-import { FcEmptyTrash } from "react-icons/fc";
-
-// axios
-import api from "../api/AxiosApi";
 import ConfirmModal from "../components/ConfirmModal.jsx";
 import Breadcrumb from "../components/mini_components/Breadcrumb.jsx";
+import SearchBar from "../components/SearchBar.jsx";
+
+// Icons
+import { FcEmptyTrash } from "react-icons/fc";
+
+// Axios instance
+import api from "../api/AxiosApi";
 
 const HomePage = () => {
   const navigate = useNavigate();
-
   const { user } = useUser();
   const params = useParams();
 
-  // extracting folder id from prams if no prams take user root folder
+  // Determine current folder ID from URL or user's root folder
   const folderId = params.folderId || user?.rootFolder;
 
-  // State to manage fetched folder data
+  // State for folders, files, loading, error, search mode, breadcrumbs, and create modal visibility
   const [folders, setFolders] = useState([]);
   const [files, setFiles] = useState([]);
-
-  // State to track currently active folder (optional/unused here)
-  const [currentFolder, setCurrentFolder] = useState(null);
-
-  // Loading and error states for folder fetching
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const [isSearching, setIsSearching] = useState(false);
+  const [breadcrumbs, setBreadcrumbs] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  const [breadcrumbs, setBreadcrumbs] = useState([]);
-
-  // Fetch data for current folder based on URL param or user's root folder.
-
+  // Fetch folders for the current folder ID
   const getFolders = useCallback(async () => {
     if (!folderId) return;
-    console.log({ breadcrumbs });
 
     setLoading(true);
     setError("");
@@ -51,44 +43,76 @@ const HomePage = () => {
       const res = await api.get(`/folder/${folderId}`);
       setFolders(res.data);
     } catch (error) {
-      console.error("Error :", error.message);
+      console.error("Error fetching folders:", error.message);
       setError("Failed to load folder.");
       navigate("/404");
     } finally {
       setLoading(false);
     }
-  }, [folderId, user?.rootFolder, navigate]);
+  }, [folderId, navigate]);
 
+  // Fetch files for the current folder ID
   const getFiles = useCallback(async () => {
     if (!folderId) return;
+
     try {
       const res = await api.get(`/file/all/${folderId}`);
-
       setFiles(res.data);
     } catch (error) {
-      setError("Failed to load Files.");
       console.error("Error fetching files:", error);
+      setError("Failed to load files.");
     }
-  }, [folderId, user?.rootFolder]);
+  }, [folderId]);
 
-  // Run on component mount or when folder/user changes
+  // Search folders and files by query
+  const searchItems = useCallback(
+    async (searchQuery) => {
+      if (!user || !searchQuery) return;
+
+      setLoading(true);
+      setIsSearching(true);
+
+      try {
+        const resFolder = await api.get(`/folder/search/${searchQuery}`);
+        const resFile = await api.get(`/file/search/${searchQuery}`);
+
+        setFolders(resFolder.data);
+        setFiles(resFile.data);
+      } catch (error) {
+        console.error("Error searching items:", error);
+        setError("Failed to search items.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [user]
+  );
+
+  // Effect to load folders and files or perform search based on URL and user state
   useEffect(() => {
-    if (user) {
+    if (!user) return;
+
+    const path = window.location.pathname.split("/")[1];
+    if (path === "search" && params.searchQuery) {
+      setIsSearching(true);
+      searchItems(params.searchQuery);
+    } else {
+      setIsSearching(false);
       getFolders();
       getFiles();
     }
-  }, [getFolders, getFiles, user]);
+  }, [getFolders, getFiles, user, params.searchQuery, searchItems]);
 
-  // When the component mounts, you can set initial breadcrumbs if needed
+  // Initialize breadcrumbs on mount
   useEffect(() => {
     setBreadcrumbs([{ folderName: "Home", folderId: "" }]);
   }, []);
 
-  // Create a new folder in the current folder
+  // Create a new folder inside the current folder
   const createFolder = async (name) => {
     try {
       await api.post(
-        `/folder/create`,
+        "/folder/create",
         {
           name,
           parentFolder: folderId,
@@ -103,19 +127,17 @@ const HomePage = () => {
     }
   };
 
-  // Redirect to login page if user is not authenticated
+  // If user is not authenticated, prompt login message
   if (!user) {
     return (
-      <>
-        <div
-          style={{ height: "calc(100vh - 4rem)" }}
-          className="p-6 bg-base-200 flex justify-center items-center"
-        >
-          <h1 className="text-3xl text-center items-center justify-center font-bold">
-            Login to access your drive
-          </h1>
-        </div>
-      </>
+      <div
+        style={{ height: "calc(100vh - 4rem)" }}
+        className="p-6 bg-base-200 flex justify-center items-center"
+      >
+        <h1 className="text-3xl text-center font-bold">
+          Login to access your drive
+        </h1>
+      </div>
     );
   }
 
@@ -125,8 +147,9 @@ const HomePage = () => {
       className="p-6 bg-base-200"
     >
       <div className="container mx-auto">
-        {/* Header: Upload and Create Folder controls */}
-        <div className="flex justify-between items-center mb-6">
+        {/* Controls: Search, Upload, Create Folder */}
+        <div className="flex flex-col md:flex-row gap-2 justify-between mb-6">
+          <SearchBar />
           <div className="flex gap-2">
             <UploadFile parentFolder={folderId} onSuccess={getFiles} />
             <button
@@ -136,56 +159,63 @@ const HomePage = () => {
               Create Folder
             </button>
           </div>
-
-          {loading && (
-            <div className="w-full text-right">
-              <span className="loading loading-spinner text-primary "></span>
-            </div>
-          )}
         </div>
 
         <hr className="mb-4 opacity-30" />
 
-        {/* Breadcrumbs */}
+        {/* Breadcrumb navigation */}
         <div className="flex mb-4">
           <Breadcrumb
             breadcrumbs={breadcrumbs}
             setBreadcrumbs={setBreadcrumbs}
           />
-        </div>
-
-        {/* Drive Items: List of folders and files */}
-        <div className="flex flex-col gap-2">
-          {!loading && folders.length === 0 && files.length === 0 && (
-            <div className="flex flex-col text-9xl justify-center items-center">
-              <FcEmptyTrash />
-              <h1 className="text-xl">Folder is Empty</h1>
+          {loading && (
+            <div className="text-right">
+              <span className="loading loading-bars loading-xl"></span>
             </div>
           )}
+        </div>
+
+        {/* Display folders and files or empty state */}
+        <div className="flex flex-col gap-2">
+          {isSearching
+            ? folders.length === 0 &&
+              files.length === 0 && (
+                <div className="flex flex-col text-9xl justify-center items-center">
+                  <FcEmptyTrash />
+                  <h1 className="text-xl">No Results Found</h1>
+                </div>
+              )
+            : !loading &&
+              folders.length === 0 &&
+              files.length === 0 && (
+                <div className="flex flex-col text-9xl justify-center items-center">
+                  <FcEmptyTrash />
+                  <h1 className="text-xl">Folder is Empty</h1>
+                </div>
+              )}
           {folders.map((item) => (
             <Folder
-              setBreadcrumbs={setBreadcrumbs}
               key={item._id}
               item={item}
-              type={"folder"}
-              setCurrentFolder={setCurrentFolder}
+              type="folder"
+              setBreadcrumbs={setBreadcrumbs}
               onRename={getFolders}
               onDelete={getFolders}
             />
           ))}
-
-          {files.map((item) => {
-            return (
-              <File
-                key={item._id}
-                item={item}
-                onRename={getFiles}
-                onDelete={getFiles}
-              />
-            );
-          })}
+          {files.map((item) => (
+            <File
+              key={item._id}
+              item={item}
+              onRename={getFiles}
+              onDelete={getFiles}
+            />
+          ))}
         </div>
       </div>
+
+      {/* Modal to create new folder */}
       <ConfirmModal
         mode="create"
         visible={showCreateModal}

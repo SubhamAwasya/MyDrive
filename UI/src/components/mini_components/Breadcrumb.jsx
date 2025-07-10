@@ -1,5 +1,5 @@
 import { FaFolder } from "react-icons/fa6";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Breadcrumb({ breadcrumbs = [], setBreadcrumbs }) {
   const navigate = useNavigate();
@@ -47,6 +47,7 @@ function Breadcrumb({ breadcrumbs = [], setBreadcrumbs }) {
             }`}
           >
             <FaFolder className="text-base" />
+
             <span
               className={
                 crumb.isEllipsis

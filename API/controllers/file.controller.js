@@ -22,6 +22,7 @@ export async function uploadFile(req, res) {
       size,
       url: fileUrl,
       parentFolder: parentFolder || null,
+      user: req.user.userId,
     });
 
     const savedFile = await fileDoc.save();
@@ -95,5 +96,25 @@ export async function renameFile(req, res) {
   } catch (err) {
     console.error("Error renaming file:", err);
     res.status(500).json({ error: "Failed to rename file" });
+  }
+}
+
+export async function searchFiles(req, res) {
+  const { query } = req.params;
+
+  if (!query || query.trim() === "") {
+    return res.status(400).json({ error: "Search query is required." });
+  }
+
+  try {
+    const results = await File.find({
+      user: req.user.userId,
+      name: { $regex: query, $options: "i" },
+    }).sort({ createdAt: -1 });
+
+    res.status(200).json(results);
+  } catch (err) {
+    console.error("Error searching files:", err);
+    res.status(500).json({ error: "Failed to search files" });
   }
 }

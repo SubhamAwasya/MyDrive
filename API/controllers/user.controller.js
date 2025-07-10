@@ -99,6 +99,7 @@ export async function register(req, res) {
     const rootFolder = await Folder.create({
       name: `Root-${email}`,
       parentFolder: null,
+      user: null,
     });
 
     // Create new user with root folder and hashed password

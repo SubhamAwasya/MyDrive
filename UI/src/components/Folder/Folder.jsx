@@ -9,13 +9,7 @@ import ConfirmModal from "../ConfirmModal.jsx";
 import { FaFolder } from "react-icons/fa6";
 import { FaEllipsisV } from "react-icons/fa";
 
-const Folder = ({
-  item,
-  setCurrentFolder,
-  onRename,
-  onDelete,
-  setBreadcrumbs,
-}) => {
+const Folder = ({ item, onRename, onDelete, setBreadcrumbs }) => {
   const { user } = useUser();
   const navigate = useNavigate();
 
@@ -24,7 +18,6 @@ const Folder = ({
 
   //  Double-click to open folder
   const openFolder = () => {
-    setCurrentFolder(item._id);
     navigate(`/folder/${item._id}`);
     setBreadcrumbs((prev) => [
       ...prev,
