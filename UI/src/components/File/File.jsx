@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useUser } from "../../context/UserContext.jsx";
-import api from "../../api/AxiosApi.jsx";
+import api, { serverURL } from "../../api/AxiosApi.jsx";
 import ConfirmModal from "../ConfirmModal.jsx";
 
 // icons
@@ -14,7 +14,7 @@ const File = ({ item, onRename, onDelete }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
 
-  const baseUrl = import.meta.env.VITE_API_BASE || "http://localhost:3000";
+  const baseUrl = serverURL;
   const fullUrl = `${baseUrl}${item.url?.startsWith("/") ? "" : "/"}${item.url}`;
 
   const viewableTypes = ["pdf", "jpg", "jpeg", "png", "gif", "mp4", "mov", "webm"];
