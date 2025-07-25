@@ -7,7 +7,7 @@ import folderRouter from "./routes/folder.route.js";
 
 import "./db/db.js";
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const app = express();
 
 // Print req route
@@ -33,5 +33,5 @@ app.use("/folder", folderRouter);
 // Print req body
 
 app.listen(PORT, () => {
-  console.log(`Server is running on PORT http://localhost:${PORT}`);
+  console.log(`Server is running on PORT ${PORT}`);
 });
