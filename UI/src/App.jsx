@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import FolderNotFound404 from "./pages/FolderNotFound404";
 import AboutMe from "./pages/AboutMe";
+import Profile from "./pages/Profile";
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
           <Route path="/folder/:folderId" element={<Home />} />
           <Route path="/search/:searchQuery" element={<Home />} />
           <Route path="/404" element={<FolderNotFound404 />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
 
         {/* Routes without layout */}

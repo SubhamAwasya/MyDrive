@@ -1,7 +1,8 @@
 // axios.js
 import axios from "axios";
 
-export const serverURL = "https://mydrive-75kj.onrender.com" || "http://localhost:3000"
+const isProduction = false
+export const serverURL = isProduction ? "https://mydrive-75kj.onrender.com" : "http://localhost:3000"
 
 const api = axios.create({
   baseURL: serverURL,

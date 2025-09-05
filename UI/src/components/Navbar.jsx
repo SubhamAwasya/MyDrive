@@ -76,8 +76,10 @@ const Navbar = () => {
           </li>
           {user && (
             <li className="flex items-center border-2 rounded-lg px-2 py-1 gap-2">
-              <FaCircleUser className="text-xl text-neutral" />
-              <span>{user?.name}</span>
+              <Link to="/profile" className="flex justify-center items-center gap-1">
+                <FaCircleUser className="text-xl text-neutral" />
+                <span>{user?.name}</span>
+              </Link>
             </li>
           )}
         </ul>
@@ -114,8 +116,10 @@ const Navbar = () => {
             </li>
             {user && (
               <li className="flex items-center border-2 rounded-lg px-2 py-1 gap-2">
-                <FaCircleUser className="text-xl text-neutral" />
-                <span>{user?.name}</span>
+                <Link to="/profile" className="flex justify-center items-center gap-1">
+                  <FaCircleUser className="text-xl text-neutral" />
+                  <span>{user?.name}</span>
+                </Link>
               </li>
             )}
           </ul>

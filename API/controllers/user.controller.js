@@ -8,56 +8,46 @@ const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 
 export async function login(req, res) {
   try {
-    console.log(req.body);
-
-    // Basic input validation
-    if (!req.body?.email || !req.body?.password) {
-      return res
-        .status(400)
-        .json({ error: "Email and password are required." });
-    }
-
-    // Destructure email and password from request body
     const { email, password } = req.body;
 
-    // Find user by email
-    const user = await User.findOne({ email });
+    // Basic input validation
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required." });
+    }
+
+    // Find user by email and exclude password
+    const user = await User.findOne({ email }).select("-password");
     if (!user) {
-      return res.status(401).json({ error: "Email not found." });
+      return res.status(401).json({ error: "Invalid email or password." });
     }
 
-    // Compare password with hashed password
-    const isMatch = await bcrypt.compare(password, user.password);
+    // Fetch full user including password for password check
+    const userWithPassword = await User.findOne({ email });
+
+    // Compare password
+    const isMatch = await bcrypt.compare(password, userWithPassword.password);
     if (!isMatch) {
-      return res.status(401).json({ error: "Invalid credentials." });
+      return res.status(401).json({ error: "Invalid email or password." });
     }
 
-    // Create a JWT payload
+    // Create JWT payload
     const payload = {
       userId: user._id,
       email: user.email,
       rootFolder: user.rootFolder,
     };
 
-    // Generate JWT token
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "10h",
-    });
+    // Generate token
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "10h" });
 
-    // Return token and basic user info (never send password)
+    // Send user info (already without password) and token
     res.status(200).json({
       message: "Login successful",
       token,
-      user: {
-        id: user._id,
-        email: user.email,
-        name: user.name,
-        avatar: user.avatar,
-        rootFolder: user.rootFolder,
-      },
+      user,
     });
   } catch (error) {
-    console.error("Login Error:", error.message);
+    console.error("Login Error:", error);
     res.status(500).json({ error: "Internal server error." });
   }
 }
@@ -122,16 +112,11 @@ export async function getCurrentUser(req, res) {
   try {
     const userId = req.user.userId;
 
+    // Fetch user and exclude password field
     const user = await User.findById(userId).select("-password");
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    res.status(200).json({
-      id: user._id,
-      email: user.email,
-      name: user.name,
-      avatar: user.avatar,
-      rootFolder: user.rootFolder,
-    });
+    res.status(200).json(user); // Send full user object (except password)
   } catch (error) {
     console.error("Get Current User Error:", error.message);
     res.status(500).json({ error: "Internal server error" });

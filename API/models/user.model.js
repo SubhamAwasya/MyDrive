@@ -28,6 +28,14 @@ const userSchema = new mongoose.Schema(
       ref: "Folder",
       required: [true, "Root folder is required"],
     },
+    driveMaxSize: {
+      type: Number,
+      default: 10 * 1024 * 1024, // 10 MB
+    },
+    driveUsedSize: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useUser } from "../../context/UserContext.jsx";
 import api, { serverURL } from "../../api/AxiosApi.jsx";
 import ConfirmModal from "../ConfirmModal.jsx";
 
@@ -8,7 +7,6 @@ import { FaRegFile } from "react-icons/fa6";
 import { FaEllipsisV } from "react-icons/fa";
 
 const File = ({ item, onRename, onDelete }) => {
-  const { user } = useUser();
 
   const [showRenameModal, setShowRenameModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
