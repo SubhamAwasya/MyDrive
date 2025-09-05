@@ -16,7 +16,15 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors());
+// CORS configuration to allow only frontend URL
+app.use(
+  cors({
+    origin: "https://my-drive-s.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true, // allow cookies if needed
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
