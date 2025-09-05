@@ -26,7 +26,10 @@ app.use((err, req, res, next) => {
   next();
 });
 
-app.get("/", (req, res) => [res.send("Server is Live.")]);
+app.get("/", (req, res) => {
+  console.log("Server is Live");
+  res.send("Server is Live.");
+});
 
 app.use("/user", userRouter);
 app.use("/file", fileRouter);
